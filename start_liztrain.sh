@@ -1,0 +1,1 @@
+lizrun start -c "cd /mnt/pfs-mc0p4k/nlu/team/xiaguoyang/code/VITA && bash predefine.sh" -n 1 -g 8 -j vita -i reg-ai.chehejia.com/ssai/lizr/cu118/py310/pytorch:2.1.2-multinode-flashattn-2.3.2-moe-adt -p base

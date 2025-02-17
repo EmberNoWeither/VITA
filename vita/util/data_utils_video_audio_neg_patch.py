@@ -552,7 +552,7 @@ class LazySupervisedDataset(Dataset):
 
         dataset_list = DataConfig[str(data_args.dataset_use)]
         print(dataset_list)
-
+        self.image_folder = data_args.image_folder
         self.max_length = MAX_IMAGE_LENGTH
         list_data_dict = []
         self.folder_dict = {}
@@ -606,6 +606,9 @@ class LazySupervisedDataset(Dataset):
         assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
         if "image" in sources[0] and "audio" not in sources[0]:
             image_file = self.list_data_dict[i]["image"]
+            if type(image_file) is list:
+                image_file = image_file[0]
+            
             set_id = self.list_data_dict[i].get("set", None)
             file = image_file[0] if type(image_file) is list else image_file
             processor = self.data_args.image_processor
@@ -687,7 +690,7 @@ class LazySupervisedDataset(Dataset):
                         for i in image
                     ]
             else:
-                image_folder = self.folder_dict[set_id]
+                image_folder = self.folder_dict[set_id] if self.image_folder is None else self.image_folder
                 image = Image.open(
                     os.path.join(image_folder, image_file.replace("\\", "/"))
                 ).convert("RGB")

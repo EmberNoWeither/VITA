@@ -15,8 +15,8 @@ from vita.model import *
 from vita.train.vita_trainer import VITATrainer
 
 # from vita.util.data_utils_video_audio import make_supervised_data_module, DataArguments
-# from vita.util.data_utils_video_audio_neg_patch import make_supervised_data_module, DataArguments
-from vita.util.data_utils_video_audio_neg_frameCat import DataArguments, make_supervised_data_module
+from vita.util.data_utils_video_audio_neg_patch import make_supervised_data_module, DataArguments
+# from vita.util.data_utils_video_audio_neg_frameCat import DataArguments, make_supervised_data_module
 
 
 def set_random_seed(seed):

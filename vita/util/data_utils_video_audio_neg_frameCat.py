@@ -125,9 +125,9 @@ def preprocess_multimodal(
                 else:
                     sentence["value"] = "<3>" + sentence["value"]
 
-    # print(patch_num)
-    # print(sum(patch_num))
-    # print(sources)
+    print(patch_num)
+    print(sum(patch_num))
+    print(sources)
     # import pdb; pdb.set_trace()
     return sources
 
@@ -585,6 +585,8 @@ class LazySupervisedDataset(Dataset):
             if key not in self.folder_dict:
                 self.folder_dict[key] = FolderDict[key]
 
+        self.image_folder = data_args.image_folder
+        
         random.shuffle(list_data_dict)
 
         self.tokenizer = tokenizer
@@ -618,6 +620,9 @@ class LazySupervisedDataset(Dataset):
         assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
         if "image" in sources[0] and "audio" not in sources[0]:
             image_file = self.list_data_dict[i]["image"]
+            if type(image_file) is list and len(image_file) == 1:
+                image_file = image_file[0]
+            
             set_id = self.list_data_dict[i].get("set", None)
             file = image_file[0] if type(image_file) is list else image_file
             processor = self.data_args.image_processor
@@ -629,14 +634,19 @@ class LazySupervisedDataset(Dataset):
                 raise NotImplementedError(f"Please use correct key to use processor size!")
 
             if type(image_file) is list:
-                assert type(set_id) is list
-                if len(image_file) != len(set_id):
-                    assert len(set(set_id)) == 1
+                # assert type(set_id) is list
+                # if len(image_file) != len(set_id):
+                #     assert len(set(set_id)) == 1
                 image = [
                     Image.open(
                         os.path.join(self.folder_dict[set_id[k]], file.replace("\\", "/"))
                     ).convert("RGB")
                     for k, file in enumerate(image_file)
+                ] if self.image_folder is None else [
+                    Image.open(
+                        os.path.join(self.image_folder, file.replace("\\", "/"))
+                    ).convert("RGB")
+                    for file in image_file
                 ]
                 if self.data_args.image_aspect_ratio == "pad":
 
@@ -680,7 +690,7 @@ class LazySupervisedDataset(Dataset):
                 else:
                     image_patches, patch_num = [], []
                     for k, img in enumerate(image):
-                        if set_id[k] not in NoPatchSets:
+                        if set_id is None or set_id[k] not in NoPatchSets:
                             img, p_num = dynamic_preprocess(
                                 img,
                                 min_num=self.data_args.min_dynamic_patch,
@@ -699,7 +709,7 @@ class LazySupervisedDataset(Dataset):
                         for i in image
                     ]
             else:
-                image_folder = self.folder_dict[set_id]
+                image_folder = self.folder_dict[set_id] if self.image_folder is None else self.image_folder
                 image = Image.open(
                     os.path.join(image_folder, image_file.replace("\\", "/"))
                 ).convert("RGB")
@@ -740,6 +750,7 @@ class LazySupervisedDataset(Dataset):
                         use_thumbnail=self.data_args.use_thumbnail,
                         img_mean=processor.image_mean,
                     )
+                    print(len(image), patch_num)
                     image = [
                         processor.preprocess(i, return_tensors="pt")["pixel_values"][0]
                         for i in image

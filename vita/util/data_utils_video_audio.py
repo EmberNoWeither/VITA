@@ -391,7 +391,7 @@ class LazySupervisedDataset(Dataset):
         for key in FolderDict.keys():
             if key not in self.folder_dict:
                 self.folder_dict[key] = FolderDict[key]
-
+        self.image_folder = data_args.image_folder
         random.shuffle(list_data_dict)
 
         self.tokenizer = tokenizer
@@ -423,8 +423,12 @@ class LazySupervisedDataset(Dataset):
         if isinstance(i, int):
             sources = [sources]
         assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
+        # print(sources[0])
         if "image" in sources[0] and "audio" not in sources[0]:
             image_file = self.list_data_dict[i]["image"]
+            if type(image_file) is list:
+                image_file = image_file[0]
+            
             set_id = self.list_data_dict[i].get("set", None)
             file = image_file[0] if type(image_file) is list else image_file
             processor = self.data_args.image_processor
@@ -438,6 +442,11 @@ class LazySupervisedDataset(Dataset):
                         os.path.join(self.folder_dict[set_id[k]], file.replace("\\", "/"))
                     ).convert("RGB")
                     for k, file in enumerate(image_file)
+                ] if self.image_folder is None else [
+                    Image.open(
+                        os.path.join(self.image_folder, file.replace("\\", "/"))
+                    ).convert("RGB")
+                    for file in image_file
                 ]
                 if self.data_args.image_aspect_ratio == "pad":
 
@@ -468,7 +477,7 @@ class LazySupervisedDataset(Dataset):
                         for i in image
                     ]
             else:
-                image_folder = self.folder_dict[set_id]
+                image_folder = self.folder_dict[set_id] if self.image_folder is None else self.image_folder
                 image = Image.open(
                     os.path.join(image_folder, image_file.replace("\\", "/"))
                 ).convert("RGB")
@@ -497,6 +506,7 @@ class LazySupervisedDataset(Dataset):
             )
 
             data_dict = preprocess(sources, self.tokenizer, has_image=True)
+            print(data_dict)
 
         elif "image" in sources[0] and "audio" in sources[0]:
             image_file = self.list_data_dict[i]["image"]

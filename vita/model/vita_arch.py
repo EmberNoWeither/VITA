@@ -224,11 +224,16 @@ class VITAMetaForCausalLM(ABC):
         cur_audio_idx = 0
         # assert sum([(cur == IMAGE_TOKEN_INDEX).sum() for cur in input_ids]) <= image_features.shape[0]
         # assert sum([(cur == AUDIO_TOKEN_INDEX).sum() for cur in input_ids]) <= audio_features['inputs_embeds'].shape[0]
+        # print("image_features.shape:", image_features.shape)
+        # print("image_features.shape[0]: ", image_features.shape[0])
+        # print("sum([(cur == IMAGE_TOKEN_INDEX).sum() for cur in input_ids]): ", sum([(cur == IMAGE_TOKEN_INDEX).sum() for cur in input_ids]))
+        # print("sum([(IMAGE_TOKEN_INDEX not in cur) for cur in input_ids]): ", sum([(IMAGE_TOKEN_INDEX not in cur) for cur in input_ids]))
         assert (
             sum([(cur == IMAGE_TOKEN_INDEX).sum() for cur in input_ids])
             + sum([(IMAGE_TOKEN_INDEX not in cur) for cur in input_ids])
             == image_features.shape[0]
-        )
+        ) 
+
         assert (
             sum([(cur == AUDIO_TOKEN_INDEX).sum() for cur in input_ids])
             + sum([(AUDIO_TOKEN_INDEX not in cur) for cur in input_ids])
