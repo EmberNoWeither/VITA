@@ -6,7 +6,7 @@ OUTPUT_DIR_FT=${OUTPUT_DIR}/llava-s1-pretrain_mlp_video
 mkdir -p ${OUTPUT_DIR_FT}
 
 deepspeed vita/train/train.py \
-    --deepspeed ./script/deepspeed/ds_config_zero3_offload.json \
+    --deepspeed ./script/deepspeed/zero3.json \
     --model_name_or_path /mnt/pfs-mc0p4k/nlu/team/xiaguoyang/models/mistralai-Mixtral-8x7B-v0.1 \
     --model_type $MODEL_TYPE \
     --version mixtral_two \
@@ -28,7 +28,7 @@ deepspeed vita/train/train.py \
     --gradient_accumulation_steps 2 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 5 \
+    --save_steps 1000 \
     --save_total_limit 1 \
     --learning_rate 5e-4 \
     --weight_decay 0. \

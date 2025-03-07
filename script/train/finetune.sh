@@ -7,16 +7,17 @@ mkdir -p ${OUTPUT_DIR_FT}
 
 deepspeed --include localhost:0,1,2,3,4,5,6,7 vita/train/train.py \
     --deepspeed ./script/deepspeed/ds_config_zero3_offload2.json \
-    --model_name_or_path Mixtral-8x7B_modVocab/mg2hg \
+    --model_name_or_path /mnt/pfs-mc0p4k/nlu/team/xiaguoyang/models/mistralai-Mixtral-8x7B-v0.1 \
     --model_type $MODEL_TYPE \
     --version mixtral_two \
-    --dataset_use Pretrain_video \
-    --vision_tower InternViT-300M-448px \
+    --dataset_use MoE_LLaVA_S2 \
+    --vision_tower /mnt/pfs-mc0p4k/nlu/team/xiaguoyang/models/OpenGVLab-InternViT-300M-448px \
     --pretrain_mm_mlp_adapter ${OUTPUT_DIR}/llava-s1-pretrain_mlp_video/mm_projector.bin \
     --mm_projector_type mlp2x_gelu \
-    --audio_encoder audio-encoder-2wh_zh_en_audioset_Mixtral-8x7B_New-base-tunning \
+    --audio_encoder /mnt/pfs-mc0p4k/nlu/team/xiaguoyang/models/VITA-MLLM-VITA/audio-encoder-2wh_zh_en_audioset_Mixtral-8x7B_New-base-tunning \
     --freeze_audio_encoder True \
     --freeze_audio_encoder_adapter False \
+    --image_folder "/mnt/pfs-mc0p4k/nlu/team/xiaguoyang/data/LLaVA-MoE-Data" \
     --image_aspect_ratio square \
     --group_by_modality_length False \
     --bf16 True \

@@ -1,0 +1,1 @@
+lizrun lpai start -c "cd /lpai/volumes/ss-nlu-ali-sh/lizr/xiaguoyang/code/VITA && bash predefine_lpai.sh" -n 2 -j vita -w pytorch -i reg-ai.chehejia.com/smart-space-ai/moe-train:0.0.1 -p base-ali-sh

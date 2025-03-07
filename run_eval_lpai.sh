@@ -1,0 +1,1 @@
+lizrun lpai start -c "sleep 3h" -n 1 -j vita -w pytorch -i reg-ai.chehejia.com/smart-space-ai/moe-train:0.0.1 -p base-ali-sh

@@ -20,6 +20,7 @@ def load_pretrained_model(
     load_4bit=False,
     device_map="auto",
     device="cuda",
+    only_one_gpu=False,
     **kwargs,
 ):
     if model_type not in {"mixtral-8x7b"}:
@@ -95,6 +96,11 @@ def load_pretrained_model(
                 "lm_head": 1,
             }
             device_map["model.audio_encoder"] = 0
+            if only_one_gpu:
+                print("into only one gpu mode")
+                device_map = {"": device} if device != "cuda" else "auto"
+
+            
             kwargs.update(device_map=device_map)
             tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
             model = VITAMixtralForCausalLM.from_pretrained(
@@ -215,6 +221,11 @@ def load_pretrained_model(
                 "lm_head": 1,
             }
             device_map["model.audio_encoder"] = 0
+            if only_one_gpu:
+                print("into only one gpu mode")
+                device_map = {"": device} if device != "cuda" else "auto"
+
+            
             kwargs.update(device_map=device_map)
             tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
             model = VITAMixtralForCausalLM.from_pretrained(
